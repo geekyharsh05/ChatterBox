@@ -23,13 +23,13 @@ export default function LoginModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Getting start</Button>
+        <Button>Getting started</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-2xl">Welcome to QuickChat</DialogTitle>
+          <DialogTitle className="text-2xl">Welcome to ChatterBox</DialogTitle>
           <DialogDescription>
-            QuickChat makes it effortless to create secure chat links and start
+            ChatterBox makes it effortless to create secure chat links and start
             conversations in seconds.
           </DialogDescription>
         </DialogHeader>
