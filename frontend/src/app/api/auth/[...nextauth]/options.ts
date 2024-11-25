@@ -1,9 +1,9 @@
-import { AuthOptions, ISODateString } from "next-auth";
+import { Account, AuthOptions, ISODateString } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 import { LOGIN_URL } from "@/lib/api-auth-routes";
 import { redirect } from "next/navigation";
-
+import axios, { AxiosError } from 'axios'
 export interface CustomSession {
     user?: CustomUser;
     expires: ISODateString;
@@ -36,27 +36,6 @@ export const authOptions: AuthOptions = {
         }),
     ],
 
-    // callbacks: {
-
-    //   async signIn({ user, account }) {
-    //     console.log("The user data is", user);
-    //     console.log('The account is', account);
-    //     return true;
-    //   },
-
-    //   async session({ session, user, token }: { session: CustomSession, user: CustomUser, token: JWT}) {
-    //     session.user = token.user as CustomUser;
-    //     return session;
-    //   },
-
-    //   async jwt({ token, user }) {
-    //     if (user) {
-    //       token.user = user;
-    //     }
-    //     return token;
-    //   },
-    // }
-
     callbacks: {
       async signIn({
         user,
@@ -83,7 +62,7 @@ export const authOptions: AuthOptions = {
             return redirect(`/auth/error?message=${error.message}`);
           }
           return redirect(
-            `/auth/error?message=Something went wrong.please try again!`
+            `/auth/error?message=Something went wrong. Please try again!`
           );
         }
       },
@@ -98,11 +77,9 @@ export const authOptions: AuthOptions = {
       async session({
         session,
         token,
-        user,
       }: {
         session: CustomSession;
         token: JWT;
-        user: User;
       }) {
         session.user = token.user as CustomUser;
         return session;
