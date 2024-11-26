@@ -1,11 +1,16 @@
 import React from 'react'
+import { authOptions, CustomSession } from '../api/auth/[...nextauth]/options';
+import { getServerSession } from 'next-auth';
+import DashNav from '@/components/chat/dash-nav';
 
-type Props = {}
-
-const page = (props: Props) => {
+export default async function dashboard() {
+  const session: CustomSession | null = await getServerSession(authOptions);
   return (
-    <div>page</div>
-  )
+    <div>
+      <DashNav
+        name={session?.user?.name!}
+        image={session?.user?.image ?? undefined}
+      />
+    </div>
+  );
 }
-
-export default page
