@@ -37,7 +37,7 @@ export const authOptions: AuthOptions = {
           provider: account?.provider!,
           image: user?.image,
         };
-        const { data } = await axios.post("http://localhost:3000", payload);
+        const { data } = await axios.post(LOGIN_URL, payload);
 
         user.id = data?.user?.id?.toString();
         user.token = data?.user?.token;
