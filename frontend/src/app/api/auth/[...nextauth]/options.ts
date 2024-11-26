@@ -16,6 +16,7 @@ export interface CustomUser {
   provider?: string | null;
   token?: string | null;
 }
+
 export const authOptions: AuthOptions = {
   pages: {
     signIn: "/",
@@ -43,7 +44,6 @@ export const authOptions: AuthOptions = {
         return true;
       } catch (error) {
         const errorMessage = error instanceof AxiosError ? error.message : "Something went wrong. Please try again!";
-        console.error("SignIn Error:", errorMessage);
         return false;
       }
     },
