@@ -4,7 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import router from "./routes/index.js";
 const app: Application = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT ?? 8000;
 
 // * Middleware
 app.use(cors());
