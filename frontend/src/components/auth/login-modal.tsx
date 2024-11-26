@@ -13,10 +13,10 @@ import { signIn } from "next-auth/react";
 import { DialogDescription } from "@radix-ui/react-dialog";
 
 const handleGoogleLogin = async () => {
-  signIn("google", {
-    redirect: true,
-    callbackUrl: "/",
-  });
+    await signIn("google", {
+      redirect: true,
+      callbackUrl: "/",
+    });
 };
 
 export default function LoginModal() {
@@ -46,4 +46,4 @@ export default function LoginModal() {
       </DialogContent>
     </Dialog>
   );
-}
+} 
