@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../config/db.config.js";
+import { log } from "console";
 
 class ChatGroupController {
     static async index (req: Request, res: Response) {
@@ -68,14 +69,34 @@ class ChatGroupController {
       try {
         const { id } = req.params;
         const body = req.body;
+
         if (id) {
-          await prisma.chatGroup.update({
+          const existingData = await prisma.chatGroup.findUnique({
+            where: {
+              id: id
+            }
+          })
+
+          if (!existingData) {
+            return res.status(404).json({ message: "Group not found" });
+          }
+
+          const isDataSame = Object.entries(body).every(
+            ([key, value]) => existingData[key as keyof typeof existingData] === value
+          );
+
+          if (isDataSame) {
+            return res.status(200).json({ message: "No changes detected, data is already up-to-date" });
+          }
+
+          const updatedData = await prisma.chatGroup.update({
             data: body,
             where: {
               id: id,
             },
           });
-          return res.json({ message: "Group updated successfully!" });
+
+          return res.json({ message: "Group updated successfully!", data: updatedData });
         }
   
         return res.status(404).json({ message: "No groups found" });
@@ -89,16 +110,18 @@ class ChatGroupController {
     static async destroy (req: Request, res: Response) {
       try {
         const { id } = req.params;
+
         await prisma.chatGroup.delete({
           where: {
             id: id,
           },
         });
+
         return res.json({ message: "Chat Deleted successfully!" });
       } catch (error) {
         return res
           .status(500)
-          .json({ message: "Something went wrong.please try again!" });
+          .json({ message: "Something went wrong, please try again!" });
       }
     }
 }
