@@ -18,6 +18,7 @@ import { AxiosError } from 'axios'
 import axios from 'axios'
 import { API_ENDPOINTS } from '@/lib/api-auth-routes'
 import { toast } from 'sonner'
+import { clearCache } from '@/lib/actions/common'
 
 const CreateChat = ( { user }: { user: CustomUser } ) => {
     const [open, setOpen] = useState(false)
@@ -44,7 +45,7 @@ const CreateChat = ( { user }: { user: CustomUser } ) => {
             setLoading(false)
             setOpen(false);
             toast.success(data?.message);
-            // clearCache("dashboard");
+            clearCache("dashboard");
           }
           setLoading(false);
         } catch (error) {
