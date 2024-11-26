@@ -15,6 +15,10 @@ class AuthController {
     try {
       const body: LoginPayloadType = req.body;
       
+      if (!body.email || !body.name || !body.oauth_id || !body.provider) {
+        return res.status(400).json({ message: "Missing required fields." });
+      }
+
       let findUser = await prisma.user.findUnique({
         where: {
           email: body.email,
@@ -32,6 +36,10 @@ class AuthController {
         email: body.email,
         id: findUser.id,
       };
+
+      if (!process.env.JWT_SECRET) {
+        return res.status(500).json({ message: "JWT secret is not defined." });
+      }
 
       const token = jwt.sign(JWTPayload, process.env.JWT_SECRET, {
         expiresIn: "365d",
