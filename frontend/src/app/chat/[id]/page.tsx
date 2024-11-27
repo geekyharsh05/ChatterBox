@@ -7,7 +7,7 @@ const chat = ({ params }: { params: { id: string } }) => {
   return (
     <div>
       <h1>Hello from chat</h1>
-      <ChatBase />
+      <ChatBase groupdId={params.id}/>
     </div>
   )
 }
