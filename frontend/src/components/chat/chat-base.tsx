@@ -5,9 +5,12 @@ import { useEffect, useMemo } from 'react'
 import { v4 as uuidV4 } from "uuid"
 import { Button } from '../ui/button'
 
-const ChatBase = () => {
+const ChatBase = ({ groupId }: { groupId: string }) => {
     const socket = useMemo(() => {
         const socket = getSocket();
+        socket.auth = {
+            room: groupId
+        }
         const connection = socket.connect();
         if (!connection) {
             console.error("Socket connection failed");
