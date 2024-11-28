@@ -1,4 +1,5 @@
 import { Server, Socket } from "socket.io";
+import prisma from "../config/db.config.js";
 
 interface CustomSocket extends Socket {
     room?: string
@@ -6,13 +7,14 @@ interface CustomSocket extends Socket {
 
 export function setupSocket (io: Server) {
     io.use((socket: CustomSocket, next) => {
-        const room = socket.handshake.auth.room
+        const room = socket.handshake.auth?.room || socket.handshake.headers.room
+        console.log("Handshake auth data:", socket.handshake.auth);
         
         if (!room) {
             return next(new Error("Invalid room"))
         }
 
-        socket.room = room;
+        socket.room = room;  
         next();
     })
 
@@ -20,9 +22,12 @@ export function setupSocket (io: Server) {
         socket.join(socket.room)
         console.log("The socket is connected", socket.id)
 
-        socket.on("message", (data) => {
+        socket.on("message", async (data) => {
             console.log("server side message", data)
-            io.to(socket.room).emit("message", data)
+            await prisma.chats.create({
+                data: data
+            })
+            socket.to(socket.room).emit("message", data)
         })
 
         socket.on("disconnect", () => {
