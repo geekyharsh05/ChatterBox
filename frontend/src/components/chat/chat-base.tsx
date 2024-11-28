@@ -1,53 +1,37 @@
 "use client"
 
 import { getSocket } from '@/lib/socket-config'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { v4 as uuidV4 } from "uuid"
-import { Button } from '../ui/button'
+import ChatSidebar from './chat-sidebar'
+import ChatNav from './chat-nav'
+import ChatUserDialog from './chat-user-dialog'
+import Chats from './chats'
 
-const ChatBase = ({ groupId }: { groupId: string }) => {
-    const socket = useMemo(() => {
-        const socket = getSocket();
-        socket.auth = {
-            room: groupId
-        }
-        const connection = socket.connect();
-        if (!connection) {
-            console.error("Socket connection failed");
-        }
-        return connection;
-    }, []);
+const ChatBase = ({ group, users, oldMessages }: { group: GroupChatType, users: Array<GroupChatUserType> | [], oldMessages: Array<MessageType> | []; }) => {
+    const [open, setOpen] = useState(true);
+    const [chatUser, setChatUser] = useState<GroupChatUserType>();
 
     useEffect(() => {
-        const handleMessage = (data: { name: string; id: string }) => {
-            console.log("The socket msg is", data);
-        };
-
-        if (socket) {
-            socket.on("message", handleMessage);
+        const data = localStorage.getItem(group.id);
+        if (data) {
+            const pData = JSON.parse(data);
+            setChatUser(pData);
         }
+    }, [group.id]);
 
-        return () => {
-            if (socket) {
-                socket.off("message", handleMessage);
-                socket.close();
-            }
-        };
-    }, [socket]);
-
-    const handleClick = () => {
-        if (socket) {
-            socket.emit("message", { name: "Harsh", id: uuidV4() });
-        } else {
-            console.error("Socket is not connected");
-        }
-    }
 
     return (
-        <div>
-            <Button onClick={handleClick}>
-                Send Message
-            </Button>
+        <div className='flex'>
+            <ChatSidebar users={users} />
+            <div className='w-full md:w-4/5 bg-gradient-to-b from-gray-50 to-white'>
+                {open ? (
+                    <ChatUserDialog open={open} setOpen={setOpen} group={group} />
+                ) : (
+                    <ChatNav chatGroup={group} users={users} />
+                )}
+                <Chats oldMessages={oldMessages} group={group} chatUser={chatUser} />
+            </div>
         </div>
     )
 }
